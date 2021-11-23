@@ -1,2 +1,4 @@
-# Interactive_Space
-🚀 Interactive Space X-perience with three.js
+# TheAstronaut
+🚀 Adventure in space
+
+(in development)
