@@ -364,7 +364,7 @@ var scene = new THREE.Scene();
 
 /* var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, .01, 100000 );
 camera.position.set( 1, 1, -1 ); */
-var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, .01, 100000);
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .01, 100000);
 camera.position.set(0.25, 1, -1.2);
 camera.lookAt( scene.position );
 
@@ -788,7 +788,7 @@ scene.add( flagLight );
 
 
 //flag
- var texture = new THREE.TextureLoader().load('https://edgy.app/wp-content/uploads/2016/10/vr-debate-e1475603418440.webp');
+ var texture = new THREE.TextureLoader().load('https://cdn.pixabay.com/photo/2012/05/07/02/49/pirate-47705_960_720.png');
 plane = new THREE.Mesh(new THREE.PlaneGeometry(600, 430, 20, 20, true), new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }) );
 plane.scale.set(.0025, .0025, .0025);
 plane.position.set(0, 1.5, 0);
