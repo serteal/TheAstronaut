@@ -885,13 +885,14 @@ loader.load("https://raw.githubusercontent.com/baronwatts/models/master/moon-veh
 
 
 //===================================================== Joystick
-class JoyStick{
-  constructor(options){
+class JoyStick {
+  constructor(options) {
     const circle = document.createElement("div");
     circle.style.cssText = "position:absolute; bottom:35px; width:80px; height:80px; background:rgba(126, 126, 126, 0.5); border:#444 solid medium; border-radius:50%; left:50%; transform:translateX(-50%);";
     const thumb = document.createElement("div");
     thumb.style.cssText = "position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; border-radius: 50%; background: #fff;";
     circle.appendChild(thumb);
+    circle.className = "joystick";
     document.body.appendChild(circle);
     this.domElement = thumb;
     this.maxRadius = options.maxRadius || 40;
@@ -901,31 +902,31 @@ class JoyStick{
     this.origin = { left:this.domElement.offsetLeft, top:this.domElement.offsetTop };
     this.rotationDamping = options.rotationDamping || 0.06;
     this.moveDamping = options.moveDamping || 0.01;
-    if (this.domElement!=undefined){
+    if (this.domElement!=undefined) {
       const joystick = this;
       if ('ontouchstart' in window){
         this.domElement.addEventListener('touchstart', function(evt){ joystick.tap(evt); });
-      }else{
+      } else {
         this.domElement.addEventListener('mousedown', function(evt){ joystick.tap(evt); });
       }
     }
   }
   
-  getMousePosition(evt){
+  getMousePosition(evt) {
     let clientX = evt.targetTouches ? evt.targetTouches[0].pageX : evt.clientX;
     let clientY = evt.targetTouches ? evt.targetTouches[0].pageY : evt.clientY;
     return { x:clientX, y:clientY };
   }
   
-  tap(evt){
+  tap(evt) {
     evt = evt || window.event;
     // get the mouse cursor position at startup:
     this.offset = this.getMousePosition(evt);
     const joystick = this;
-    if ('ontouchstart' in window){
+    if ('ontouchstart' in window) {
       document.ontouchmove = function(evt){ joystick.move(evt); };
       document.ontouchend =  function(evt){ joystick.up(evt); };
-    }else{
+    } else {
       document.onmousemove = function(evt){ joystick.move(evt); };
       document.onmouseup = function(evt){ joystick.up(evt); };
     }
@@ -940,7 +941,7 @@ class JoyStick{
     //this.offset = mouse;
     
     const sqMag = left*left + top*top;
-    if (sqMag>this.maxRadiusSquared){
+    if (sqMag>this.maxRadiusSquared) {
       //Only use sqrt if essential
       const magnitude = Math.sqrt(sqMag);
       left /= magnitude;
@@ -959,14 +960,16 @@ class JoyStick{
     if (this.onMove!=undefined) this.onMove.call(this.game, forward, turn);
   }
   
-  up(evt){
-    if ('ontouchstart' in window){
+  up(evt) {
+
+    if ('ontouchstart' in window) {
       document.ontouchmove = null;
       document.touchend = null;
-    }else{
+    } else {
       document.onmousemove = null;
       document.onmouseup = null;
     }
+
     this.domElement.style.top = `${this.origin.top}px`;
     this.domElement.style.left = `${this.origin.left}px`;
     
@@ -976,7 +979,109 @@ class JoyStick{
     
 
 
+//===================================================== Keyboard State
+
+KeyboardState = function()
+{	
+	// bind keyEvents
+	document.addEventListener("keydown", KeyboardState.onKeyDown, false);
+	document.addEventListener("keyup",   KeyboardState.onKeyUp,   false);	
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+KeyboardState.k = 
+{  
+    8: "backspace",  9: "tab",       13: "enter",    16: "shift", 
+    17: "ctrl",     18: "alt",       27: "esc",      32: "space",
+    33: "pageup",   34: "pagedown",  35: "end",      36: "home",
+    37: "left",     38: "up",        39: "right",    40: "down",
+    45: "insert",   46: "delete",   186: ";",       187: "=",
+    188: ",",      189: "-",        190: ".",       191: "/",
+    219: "[",      220: "\\",       221: "]",       222: "'"
+}
+
+KeyboardState.status = {};
+
+KeyboardState.keyName = function ( keyCode )
+{
+	return ( KeyboardState.k[keyCode] != null ) ? 
+		KeyboardState.k[keyCode] : 
+		String.fromCharCode(keyCode);
+}
+
+KeyboardState.onKeyUp = function(event)
+{
+	var key = KeyboardState.keyName(event.keyCode);
+	if ( KeyboardState.status[key] )
+		KeyboardState.status[key].pressed = false;
+}
+
+KeyboardState.onKeyDown = function(event)
+{
+	var key = KeyboardState.keyName(event.keyCode);
+	if ( !KeyboardState.status[key] )
+		KeyboardState.status[key] = { down: false, pressed: false, up: false, updatedPreviously: false };
+}
+
+KeyboardState.prototype.update = function()
+{
+	for (var key in KeyboardState.status)
+	{
+		// insure that every keypress has "down" status exactly once
+		if ( !KeyboardState.status[key].updatedPreviously )
+		{
+			KeyboardState.status[key].down        		= true;
+			KeyboardState.status[key].pressed     		= true;
+			KeyboardState.status[key].updatedPreviously = true;
+		}
+		else // updated previously
+		{
+			KeyboardState.status[key].down = false;
+		}
+
+		// key has been flagged as "up" since last update
+		if ( KeyboardState.status[key].up ) 
+		{
+			delete KeyboardState.status[key];
+			continue; // move on to next key
+		}
+		
+		if ( !KeyboardState.status[key].pressed ) // key released
+			KeyboardState.status[key].up = true;
+	}
+}
+
+KeyboardState.prototype.down = function(keyName)
+{
+	return (KeyboardState.status[keyName] && KeyboardState.status[keyName].down);
+}
+
+KeyboardState.prototype.pressed = function(keyName)
+{
+	return (KeyboardState.status[keyName] && KeyboardState.status[keyName].pressed);
+}
+
+KeyboardState.prototype.up = function(keyName)
+{
+	return (KeyboardState.status[keyName] && KeyboardState.status[keyName].up);
+}
+
+KeyboardState.prototype.debug = function()
+{
+	var list = "Keys active: ";
+	for (var arg in KeyboardState.status)
+		list += " " + arg
+	console.log(list);
+}
+
+
+
+//===================================================== Movement
+
 var js = { forward:0, turn:0 };
+
+var keyboard = new KeyboardState();
 
 var joystick = new JoyStick({ 
   onMove: joystickCallback 
@@ -995,18 +1100,41 @@ function updateDrive(forward=js.forward, turn=js.turn){
   const force = maxForce * forward;
   const steer = maxSteerVal * turn;
 
-  if (forward!=0){
+  if(keyboard.pressed("W")){ 
+      for(i = 0; i<10; ++i){
+        forward = 0.15;
+        mesh.translateZ(0.012);//move cube
+        if(clip2) clip2.play();
+        if(clip1) clip1.stop();
+    }
+  } 
+  if(keyboard.pressed("S")){ 
+    for(i = 0; i<10; ++i){
+      forward = 0.75;
+      mesh.translateZ(-0.012);//move cube
+      if(clip2) clip2.play();
+      if(clip1) clip1.stop();
+    }
+  }
+  if(keyboard.pressed("A")){ 
+    mesh.rotateY(0.025);
+  } 
+  if(keyboard.pressed("D")){ 
+    mesh.rotateY(-0.025);
+  } 
+
+  if (forward!=0) {
     mesh.translateZ(force);//move cube
     if(clip2) clip2.play();
     if(clip1) clip1.stop();
-  }else{
+  } else {
     if(clip2) clip2.stop();
     if(clip1) clip1.play();
   }
     mesh.rotateY(steer);
 }
 
-    
+
 
 //===================================================== 3rd person view
 var followCam = new THREE.Object3D();
@@ -1027,6 +1155,7 @@ var lastTime;
 (function animate() {
     requestAnimationFrame( animate );
     updateCamera();
+    keyboard.update();
     updateDrive();
     renderer.render( scene, camera );
     //composer.render();
@@ -1059,7 +1188,7 @@ var lastTime;
 
 
     //display coordinates
-    //info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
+    info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
  
 
 

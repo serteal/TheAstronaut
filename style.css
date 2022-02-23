@@ -57,3 +57,13 @@ body {
   text-transform: uppercase;
   color: #d6483b;
 }
+
+.joystick {
+  display: none;
+}
+
+@media only screen and (max-width: 1000px) {
+  .joystick {
+    display: inline;
+  }
+}
