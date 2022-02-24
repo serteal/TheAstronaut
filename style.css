@@ -58,12 +58,32 @@ body {
   color: #d6483b;
 }
 
-.joystick {
+.circle {
   display: none;
+  position: absolute;
+  bottom: 35px;
+  width: 20%;
+  height: 0;
+  padding-bottom: 20%;
+  background: rgba(126, 126, 126, 0.5);
+  border: #444 solid medium;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.thumb {
+  position: absolute;
+  left: 30%;
+  top: 30%;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: #fff;
 }
 
 @media only screen and (max-width: 1000px) {
-  .joystick {
+  .circle {
     display: inline;
   }
 }
