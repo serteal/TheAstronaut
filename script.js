@@ -1103,8 +1103,9 @@ function updateDrive(forward=js.forward, turn=js.turn){
 
   if(keyboard.pressed("W")){ 
       for(i = 0; i<10; ++i){
-        forward = 0.15;
-        mesh.translateZ(0.012);//move cube
+        console.log(slider.value)
+        forward = slider.value;
+        mesh.translateZ(forward*maxForce);//move cube
         if(clip2) clip2.play();
         if(clip1) clip1.stop();
     }
@@ -1135,7 +1136,9 @@ function updateDrive(forward=js.forward, turn=js.turn){
     mesh.rotateY(steer);
 }
 
+//===================================================== Slider
 
+var slider = document.getElementById("myRange");
 
 //===================================================== 3rd person view
 var followCam = new THREE.Object3D();
@@ -1164,7 +1167,10 @@ var lastTime;
     let delta = clock.getDelta();
     mixers.map(x=>x.update(delta));
 
-
+    var slider = document.getElementById("myRange");
+    slider.oninput = function() {
+      console.log(slider.value) // Display the default slider value
+    }
  
 
     /*cannon*/
@@ -1189,7 +1195,7 @@ var lastTime;
 
 
     //display coordinates
-    info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
+    //info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
  
 
 
