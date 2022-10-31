@@ -668,15 +668,6 @@ Promise.all([
 });// end Promise
 
 
-
-
-
-
-
-
-
-
-
 //=========================================================================================== flag
 var geometry = new THREE.BoxBufferGeometry(0.15, 2, 0.15);
 /* We change the pivot point to be at the bottom of the cube, instead of its center. So we translate the whole geometry. */
@@ -687,9 +678,6 @@ scene.add(flagLocation);
 flagLocation.position.x = 10;
 flagLocation.position.z = 50;
 flagLocation.rotateY(Math.PI);
-
-
-
 
 //flag pole
 var geometry = new THREE.CylinderGeometry(.03, .03, 4, 32);
@@ -724,8 +712,6 @@ plane.castShadow = true;
 flagLocation.add(plane);
 addModifier(plane);
 
-
-
 //flag wave animation
 var modifier, cloth;
 
@@ -737,11 +723,6 @@ function addModifier(mesh) {
 modifier.addModifier(cloth);
 cloth.lockXMin(0);
 computeNormals: false
-
-
-
-
-
 
 
 //===================================================== add tree
@@ -764,12 +745,8 @@ loader.load("https://raw.githubusercontent.com/baronwatts/models/master/moon-veh
     obj.castShadow = true;
     flagLocation.add(obj);
 
-
-
 });
 */
-
-
 
 
 //===================================================== add sky particles
@@ -807,7 +784,6 @@ sparks.geometry.vertices.map((d, i) => {
   d.x = randnum(-500, 500);
   d.z = randnum(-500, 500);
 });
-
 
 
 //===================================================== Joystick
@@ -880,7 +856,7 @@ class JoyStick {
     this.domElement.style.top = `${top + this.domElement.clientHeight / 2}px`;
     this.domElement.style.left = `${left + this.domElement.clientWidth / 2}px`;
 
-    //@TODO use nipple,js
+    // TODO: use nipple.js
     const forward = -(top - this.origin.top + this.domElement.clientHeight / 2) / this.maxRadius;
     const turn = (left - this.origin.left + this.domElement.clientWidth / 2) / this.maxRadius;
 
@@ -905,8 +881,7 @@ class JoyStick {
 }//end joystick class
 
 
-
-//===================================================== Keyboard State
+//===================================================== keyboard state
 
 KeyboardState = function() {
   // bind keyEvents
@@ -988,7 +963,6 @@ KeyboardState.prototype.debug = function() {
   for (var arg in KeyboardState.status)
     list += " " + arg
 }
-
 
 
 //===================================================== Movement
@@ -1089,23 +1063,10 @@ var lastTime;
 
   if (check) check();
 
-
-
-
-
-
-
-
-
   //display coordinates
   info.innerHTML = `<span>X: </span>${mesh.position.x.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Y: </span>${mesh.position.y.toFixed(2)}, &nbsp;&nbsp;&nbsp; <span>Z: </span>${mesh.position.z.toFixed(2)}`
 
-
-
   //flag
   modifier && modifier.apply();
-
-
-
 
 })();
