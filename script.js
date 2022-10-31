@@ -20,15 +20,6 @@ class CannonHelper {
 
     this.sun = light;
     this.scene.add(light);
-
-
-
-
-
-
-
-
-
   }
 
   set shadowTarget(obj) {
@@ -274,8 +265,6 @@ class CannonHelper {
             wireframe: false
           });
 
-
-
           //Set a different color on each face
           /*for (var i = 0, j = geometry.faces.length; i < j; i++) {
             geometry.faces[i].color = new THREE.Color(
@@ -350,15 +339,6 @@ class CannonHelper {
 }
 
 
-
-
-
-
-
-
-
-
-
 //===================================================== scene
 var scene = new THREE.Scene();
 
@@ -404,20 +384,10 @@ const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, gro
 world.addContactMaterial(wheelGroundContactMaterial);
 
 
-
-
-
-
 //===================================================== add front & back lighting
 var light = new THREE.DirectionalLight(new THREE.Color("gray"), 1);
 light.position.set(1, 1, 1).normalize();
 scene.add(light);
-
-
-
-
-
-
 
 
 //===================================================== resize
@@ -428,7 +398,6 @@ window.addEventListener("resize", function() {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 });
-
 
 
 //========================================================== effects
@@ -447,7 +416,6 @@ composer.addPass(renderPass);
 composer.addPass(hTilt);
 composer.addPass(effectCopy);
 
-
 var controls = new function() {
   this.hTilt = false;
   this.hTiltR = 0.5;
@@ -465,8 +433,6 @@ gui.add(controls, 'hTiltR', 0, 1).onChange(controls.onChange);
 //activate tilt effect
 document.querySelector('.dg .c input[type="checkbox"]').click();
 dat.GUI.toggleHide();
-
-
 
 
 //=========================================================================================== add tweening
@@ -523,12 +489,6 @@ Object.defineProperties(THREE.Object3D.prototype, {
 });
 
 
-
-
-
-
-
-
 //===================================================== model
 var geometry = new THREE.BoxBufferGeometry(.5, 1, .5);
 /* We change the pivot point to be at the bottom of the cube, instead of its center. So we translate the whole geometry. */
@@ -543,8 +503,6 @@ light.position.set(0, 1, 0);
 light.castShadow = true;
 light.target = mesh;//shadow will follow mesh          
 mesh.add(light);
-
-
 
 
 //===================================================== add Model
@@ -570,19 +528,12 @@ loader.load('https://raw.githubusercontent.com/baronwatts/models/master/astronau
   /*  var lightPlayer = new THREE.PointLight(new THREE.Color('wheat'), 10, .5);
     mesh.add(lightPlayer);*/
 
-
-
-
   var mixer = new THREE.AnimationMixer(player);
   clip1 = mixer.clipAction(object.animations[0]);
   clip2 = mixer.clipAction(object.animations[1]);
   mixers.push(mixer);
 
 });
-
-
-
-
 
 
 //===================================================== add Terrain
@@ -664,9 +615,7 @@ var img2matrix = function() {
 }();
 
 
-
-
-//can add an array if things
+// can add an array if things
 var check;
 Promise.all([
   img2matrix.fromUrl('https://upload.wikimedia.org/wikipedia/commons/5/57/Heightmap.png', sizeX, sizeY, minHeight, maxHeight)(),
@@ -674,14 +623,7 @@ Promise.all([
 
   var matrix = data[0];
 
-  //console.log(matrix);
-
-
-
-
   //Array(128) [ (128) […], (128) […], (128) […], (128) […], (128) […], (128) […], (128) […], (128) […], (128) […], (128) […], … ]
-
-
   const terrainShape = new CANNON.Heightfield(matrix, { elementSize: 10 });
   const terrainBody = new CANNON.Body({ mass: 0 });
 
@@ -691,23 +633,11 @@ Promise.all([
   world.add(terrainBody);
   helper.addVisual(terrainBody, 'landscape');
 
-
-
   var raycastHelperGeometry = new THREE.CylinderGeometry(0, 1, 5, 1.5);
   raycastHelperGeometry.translate(0, 0, 0);
   raycastHelperGeometry.rotateX(Math.PI / 2);
   raycastHelperMesh = new THREE.Mesh(raycastHelperGeometry, new THREE.MeshNormalMaterial());
   scene.add(raycastHelperMesh);
-
-
-
-  //console.log( terrainBody.threemesh.children[0] );
-
-
-
-
-
-
 
 
   check = function() {
@@ -719,27 +649,23 @@ Promise.all([
       raycastHelperMesh.lookAt(intersects[0].face.normal);
       raycastHelperMesh.position.copy(intersects[0].point);
     }
-    //position objects ontop of the terrain
+    //position objects on top of the terrain
     mesh.position.y = intersects && intersects[0] ? intersects[0].point.y + 0.1 : 30;
-
 
     //raycast flag
     var raycaster2 = new THREE.Raycaster(flagLocation.position, new THREE.Vector3(0, -1, 0));
     var intersects2 = raycaster2.intersectObject(terrainBody.threemesh.children[0]);
 
-
-    //position objects ontop of the terrain
+    //position objects on top of the terrain
     flagLocation.position.y = intersects2 && intersects2[0] ? intersects2[0].point.y + .5 : 30;
     flagLight.position.y = flagLocation.position.y + 50;
     flagLight.position.x = flagLocation.position.x + 5
     flagLight.position.z = flagLocation.position.z;
 
+  }// end check
 
 
-  }//end check
-
-
-});//end Promise
+});// end Promise
 
 
 
